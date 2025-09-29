@@ -1,524 +1,635 @@
-import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Users, Target, Settings, TrendingUp, DollarSign, ChevronRight, CheckCircle, AlertCircle, Clock, Globe } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ארגז חול AI - תוכנית 720</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .icon {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-const ExecutiveDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+    <script type="text/babel">
+        const { useState } = React;
 
-  const tabs = [
-    { id: 'overview', title: 'סקירה כללית', icon: Globe },
-    { id: 'design', title: 'עיצוב הארגז', icon: Settings },
-    { id: 'management', title: 'ניהול ובקרה', icon: Users },
-    { id: 'success', title: 'מדדי הצלחה', icon: TrendingUp },
-    { id: 'budget', title: 'תקציב ומשאבים', icon: DollarSign }
-  ];
+        // Icon components
+        const Globe = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+        );
 
-  const kpis = [
-    { title: 'תלמידים משתתפים', value: '600-800', change: '+15%', color: 'text-blue-600' },
-    { title: 'בתי ספר', value: '24', change: 'חטיבות ביניים', color: 'text-green-600' },
-    { title: 'תקופת ניסוי', value: '2 שנים', change: 'תשפ"ו-תשפ"ז', color: 'text-purple-600' },
-    { title: 'יעד שיפור הישגים', value: '15%', change: 'במקצועות הליבה', color: 'text-orange-600' }
-  ];
+        const Settings = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="m12 1 1.9 3.7 4.1.6-3 2.9.7 4.1L12 10l-3.7 2.3.7-4.1-3-2.9 4.1-.6L12 1z"/>
+            </svg>
+        );
 
-  const stakeholders = [
-    { name: 'משרד החינוך', role: 'מוביל', status: 'פעיל' },
-    { name: 'רשות הגנת הפרטיות', role: 'רגולטור', status: 'שותף' },
-    { name: 'חברות טכנולוגיה', role: 'ספק פתרונות', status: 'מועמד' },
-    { name: 'רשויות חינוך', role: 'יישום', status: 'מצטרף' }
-  ];
+        const Users = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+        );
 
-  const timeline = [
-    { phase: 'פרסום קול קורא', duration: '3 חודשים', status: 'completed' },
-    { phase: 'הערכה ואישור', duration: '2 חודשים', status: 'current' },
-    { phase: 'השקת הניסוי', duration: 'תשפ"ו', status: 'pending' },
-    { phase: 'הערכה ביניים', duration: 'סמסטר א\'', status: 'pending' },
-    { phase: 'סיום והמלצות', duration: 'תשפ"ז', status: 'pending' }
-  ];
+        const TrendingUp = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
+                <polyline points="16,7 22,7 22,13"/>
+            </svg>
+        );
 
-  const risks = [
-    { risk: 'פרטיות תלמידים', level: 'גבוה', mitigation: 'ועדת אתיקה + בקרה צמודה' },
-    { risk: 'התנגדות הורים', level: 'בינוני', mitigation: 'שקיפות ותקשורת רציפה' },
-    { risk: 'תלות טכנולוגית', level: 'בינוני', mitigation: 'איזון עם פדגוגיה מסורתית' }
-  ];
+        const DollarSign = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="m17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+        );
 
-  const renderOverview = () => (
-    <div className="space-y-6">
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {kpis.map((kpi, index) => (
-          <Card key={index}>
-            <CardContent className="p-4">
-              <div className="text-2xl font-bold mb-1">{kpi.value}</div>
-              <div className="text-sm text-gray-600 mb-2">{kpi.title}</div>
-              <div className={`text-xs ${kpi.color} font-medium`}>{kpi.change}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        const Target = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="6"/>
+                <circle cx="12" cy="12" r="2"/>
+            </svg>
+        );
 
-      {/* Sandbox Type */}
-      <Card>
-        <CardHeader>
-          <CardTitle>סוג ארגז החול: מלווה-מייעץ</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-blue-50 p-4 rounded-lg border-r-4 border-blue-400">
-            <p className="font-medium mb-2">🤝 ארגז חול מלווה-מייעץ (כדוגמת סינגפור)</p>
-            <p className="text-sm text-gray-600">
-              מסייע למפוקחים (בתי ספר וחברות טכנולוגיה) להבין כיצד ליישם את הרגולציה הקיימת 
-              במסגרת השימוש ב-AI חינוכי, ללא שינוי חוקים קיימים
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        const CheckCircle = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <path d="m9 12 2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+        );
 
-      {/* Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle>לוח זמנים מרכזי</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {timeline.map((item, index) => (
-              <div key={index} className="flex items-center gap-4">
-                <div className={`w-4 h-4 rounded-full ${
-                  item.status === 'completed' ? 'bg-green-400' : 
-                  item.status === 'current' ? 'bg-blue-400' : 'bg-gray-300'
-                }`} />
-                <div className="flex-1">
-                  <div className="font-medium">{item.phase}</div>
-                  <div className="text-sm text-gray-600">{item.duration}</div>
+        const AlertCircle = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+        );
+
+        const Clock = () => (
+            <svg className="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12,6 12,12 16,14"/>
+            </svg>
+        );
+
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-lg shadow-sm border ${className}`}>
+                {children}
+            </div>
+        );
+
+        const CardHeader = ({ children }) => (
+            <div className="px-6 py-4 border-b">
+                {children}
+            </div>
+        );
+
+        const CardTitle = ({ children, className = "" }) => (
+            <h3 className={`text-lg font-semibold ${className}`}>
+                {children}
+            </h3>
+        );
+
+        const CardContent = ({ children, className = "" }) => (
+            <div className={`px-6 py-4 ${className}`}>
+                {children}
+            </div>
+        );
+
+        const ExecutiveDashboard = () => {
+            const [activeTab, setActiveTab] = useState('overview');
+
+            const tabs = [
+                { id: 'overview', title: 'סקירה כללית', icon: Globe },
+                { id: 'design', title: 'עיצוב הארגז', icon: Settings },
+                { id: 'management', title: 'ניהול ובקרה', icon: Users },
+                { id: 'success', title: 'מדדי הצלחה', icon: TrendingUp },
+                { id: 'budget', title: 'תקציב ומשאבים', icon: DollarSign }
+            ];
+
+            const kpis = [
+                { title: 'תלמידים משתתפים', value: '600-800', change: '+15%', color: 'text-blue-600' },
+                { title: 'בתי ספר', value: '24', change: 'חטיבות ביניים', color: 'text-green-600' },
+                { title: 'תקופת ניסוי', value: '2 שנים', change: 'תשפ"ו-תשפ"ז', color: 'text-purple-600' },
+                { title: 'יעד שיפור הישגים', value: '15%', change: 'במקצועות הליבה', color: 'text-orange-600' }
+            ];
+
+            const stakeholders = [
+                { name: 'משרד החינוך', role: 'מוביל', status: 'פעיל' },
+                { name: 'רשות הגנת הפרטיות', role: 'רגולטור', status: 'שותף' },
+                { name: 'חברות טכנולוגיה', role: 'ספק פתרונות', status: 'מועמד' },
+                { name: 'רשויות חינוך', role: 'יישום', status: 'מצטרף' }
+            ];
+
+            const timeline = [
+                { phase: 'פרסום קול קורא', duration: '3 חודשים', status: 'completed' },
+                { phase: 'הערכה ואישור', duration: '2 חודשים', status: 'current' },
+                { phase: 'השקת הניסוי', duration: 'תשפ"ו', status: 'pending' },
+                { phase: 'הערכה ביניים', duration: 'סמסטר א\'', status: 'pending' },
+                { phase: 'סיום והמלצות', duration: 'תשפ"ז', status: 'pending' }
+            ];
+
+            const risks = [
+                { risk: 'פרטיות תלמידים', level: 'גבוה', mitigation: 'ועדת אתיקה + בקרה צמודה' },
+                { risk: 'התנגדות הורים', level: 'בינוני', mitigation: 'שקיפות ותקשורת רציפה' },
+                { risk: 'תלות טכנولוגית', level: 'בינוני', mitigation: 'איזון עם פדגוגיה מסורתית' }
+            ];
+
+            const renderOverview = () => (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {kpis.map((kpi, index) => (
+                            <Card key={index}>
+                                <CardContent className="p-4">
+                                    <div className="text-2xl font-bold mb-1">{kpi.value}</div>
+                                    <div className="text-sm text-gray-600 mb-2">{kpi.title}</div>
+                                    <div className={`text-xs ${kpi.color} font-medium`}>{kpi.change}</div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>סוג ארגז החול: מלווה-מייעץ</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="bg-blue-50 p-4 rounded-lg border-r-4 border-blue-400">
+                                <p className="font-medium mb-2">🤝 ארגז חול מלווה-מייעץ (כדוגמת סינגפור)</p>
+                                <p className="text-sm text-gray-600">
+                                    מסייע למפוקחים (בתי ספר וחברות טכנולוגיה) להבין כיצד ליישם את הרגולציה הקיימת 
+                                    במסגרת השימוש ב-AI חינוכי, ללא שינוי חוקים קיימים
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>לוח זמנים מרכזי</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {timeline.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-4">
+                                        <div className={`w-4 h-4 rounded-full ${
+                                            item.status === 'completed' ? 'bg-green-400' : 
+                                            item.status === 'current' ? 'bg-blue-400' : 'bg-gray-300'
+                                        }`} />
+                                        <div className="flex-1">
+                                            <div className="font-medium">{item.phase}</div>
+                                            <div className="text-sm text-gray-600">{item.duration}</div>
+                                        </div>
+                                        {item.status === 'current' && <Clock />}
+                                        {item.status === 'completed' && <CheckCircle />}
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-                {item.status === 'current' && <Clock className="w-4 h-4 text-blue-600" />}
-                {item.status === 'completed' && <CheckCircle className="w-4 h-4 text-green-600" />}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderDesign = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>קהלי יעד</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl mb-2">🏫</div>
-              <div className="font-medium">רשויות חינוך</div>
-              <div className="text-sm text-gray-600">24 חטיבות ביניים</div>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl mb-2">🚀</div>
-              <div className="font-medium">חברות טכנולוגיה</div>
-              <div className="text-sm text-gray-600">מקומיות ובינ"ל</div>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl mb-2">🎓</div>
-              <div className="font-medium">תלמידי ז'</div>
-              <div className="text-sm text-gray-600">600-800 תלמידים</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>מטרות אסטרטגיות</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-blue-600 mt-1" />
-              <div>
-                <div className="font-medium">פתרון חסמים רגולטוריים</div>
-                <div className="text-sm text-gray-600">הבהרת יישום חוקי פרטיות עם AI חינוכי</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-green-600 mt-1" />
-              <div>
-                <div className="font-medium">חיזוק התעשייה הישראלית</div>
-                <div className="text-sm text-gray-600">סיוע לחברות טכנולוגיה מקומיות</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-purple-600 mt-1" />
-              <div>
-                <div className="font-medium">קידום חדשנות פדגוגית</div>
-                <div className="text-sm text-gray-600">למידה מותאמת אישית ב-STEM ואנגלית</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>שותפים אסטרטגיים</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {stakeholders.map((stakeholder, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <div className="font-medium">{stakeholder.name}</div>
-                  <div className="text-sm text-gray-600">{stakeholder.role}</div>
-                </div>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  stakeholder.status === 'פעיל' ? 'bg-green-100 text-green-800' :
-                  stakeholder.status === 'שותף' ? 'bg-blue-100 text-blue-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {stakeholder.status}
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderManagement = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>מבנה ניהול</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="font-medium mb-2">🏛️ ועדת היגוי</div>
-            <div className="text-sm space-y-1">
-              <div>• יו"ר: מנהל החדשנות והטכנולוגיה - משרד החינוך</div>
-              <div>• נציג רשות הגנת הפרטיות</div>
-              <div>• נציג משרד המשפטים</div>
-              <div>• מנהל רגיונל משרד החינוך</div>
-              <div>• נציג גופי החינוך המשתתפים</div>
-              <div>• מומחה חיצוני לאתיקה של AI</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>קווים אדומים ובקרת סיכונים</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {risks.map((risk, index) => (
-              <div key={index} className="border-l-4 border-red-400 pl-4 py-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium">{risk.risk}</span>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    risk.level === 'גבוה' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {risk.level}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600">🛡️ {risk.mitigation}</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>שקיפות וגישה לציבור</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>דוחות רבעוניים באתר משרד החינוך</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>עדכונים שוטפים לקהילות הורים</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>כנס שנתי להצגת תוצאות</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderSuccess = () => (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-green-600">🎯 קריטריוני הצלחה</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-sm">שיפור 15%+ בהישגים לימודיים</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-sm">עלייה במעורבות תלמידים</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-sm">הפחתת עומס על מורים ב-30%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-sm">שביעות רצון +75% (הורים, מורים)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-sm">עמידה מלאה בתקני פרטיות</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-600">⚠️ קריטריוני כישלון</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm">ירידה בהישגים או אי-שיפור</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm">הפרת פרטיות או דליפת מידע</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm">התנגדות +30% מההורים</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm">תקלות טכניות חוזרות</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>מערך מדידה ובקרה</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <Clock className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-              <div className="font-medium">דיווחים חודשיים</div>
-              <div className="text-sm text-gray-600">מבתי הספר</div>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <Users className="w-8 h-8 mx-auto mb-2 text-green-600" />
-              <div className="font-medium">פגישות רבעוניות</div>
-              <div className="text-sm text-gray-600">ועדת היגוי</div>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-              <div className="font-medium">סקרי שביעות רצון</div>
-              <div className="text-sm text-gray-600">כל סמסטר</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>אסטרטגיות יציאה</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-lg border-r-4 border-green-400">
-              <div className="font-medium text-green-800">🚀 תרחיש הצלחה</div>
-              <div className="text-sm text-green-700">פריסה הדרגתית למערכת החינוך + התאמת רגולציה</div>
-            </div>
-            <div className="p-4 bg-red-50 rounded-lg border-r-4 border-red-400">
-              <div className="font-medium text-red-800">🔄 תרחיש כישלון</div>
-              <div className="text-sm text-red-700">הפסקת ניסוי + תיקון ליקויים + פיתוח גישה חלופית</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderBudget = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>פילוח תקציב קול הקורא</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-              <div>
-                <div className="font-medium">ניטור ובקרה</div>
-                <div className="text-sm text-gray-600">מערכות מדידה + מומחים חיצוניים</div>
-              </div>
-              <div className="text-xl font-bold text-blue-600">30%</div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div>
-                <div className="font-medium">הכשרת צוותים</div>
-                <div className="text-sm text-gray-600">הכשרת מורים + ליווי פדגוגי</div>
-              </div>
-              <div className="text-xl font-bold text-green-600">25%</div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-              <div>
-                <div className="font-medium">תשתיות טכנולוגיות</div>
-                <div className="text-sm text-gray-600">שדרוג תשתיות + אבטחה</div>
-              </div>
-              <div className="text-xl font-bold text-purple-600">20%</div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
-              <div>
-                <div className="font-medium">ניהול פרויקט</div>
-                <div className="text-sm text-gray-600">צוות ניהול + יועצים</div>
-              </div>
-              <div className="text-xl font-bold text-orange-600">15%</div>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div>
-                <div className="font-medium">פרסום וחשיפה</div>
-                <div className="text-sm text-gray-600">כנסים + שיתוף בינלאומי</div>
-              </div>
-              <div className="text-xl font-bold text-gray-600">10%</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>משאבים נוספים נדרשים</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium mb-3">👥 כוח אדם</h4>
-              <div className="space-y-2 text-sm">
-                <div>• מנהל פרויקט ייעודי (משרה מלאה)</div>
-                <div>• 3-4 מומחי טכנולוגיה חינוכית</div>
-                <div>• יועצים משפטיים (פרטיות + AI)</div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-3">🤝 שותפים</h4>
-              <div className="space-y-2 text-sm">
-                <div>• רשות הגנת הפרטיות (ליווי)</div>
-                <div>• מכוני מחקר (הערכה)</div>
-                <div>• ארגוני הורים ומורים</div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-3">🧠 ידע</h4>
-              <div className="space-y-2 text-sm">
-                <div>• מחקר בינלאומי AI בחינוך</div>
-                <div>• ייעוץ משפטי מתקדם</div>
-                <div>• מומחיות אתיקה AI</div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium mb-3">🏗️ תשתיות</h4>
-              <div className="space-y-2 text-sm">
-                <div>• מרכז נתונים מאובטח</div>
-                <div>• מחשוב ענן ייעודי</div>
-                <div>• מערכות גיבוי מתקדמות</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen" dir="rtl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-center mb-4">ארגז חול AI - תוכנית 720</h1>
-        <h2 className="text-xl text-center text-gray-600 mb-6">למידה מותאמת אישית במערכת החינוך</h2>
-        
-        {/* Key Stats Bar */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="grid grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600">720</div>
-              <div className="text-sm text-gray-600">תוכנית</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600">24</div>
-              <div className="text-sm text-gray-600">בתי ספר</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600">2</div>
-              <div className="text-sm text-gray-600">שנות ניסוי</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600">800</div>
-              <div className="text-sm text-gray-600">תלמידים</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="flex overflow-x-auto">
-          {tabs.map(tab => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600 bg-blue-50'
-                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {tab.title}
-              </button>
             );
-          })}
-        </div>
-      </div>
 
-      {/* Content */}
-      <div className="bg-white rounded-lg shadow min-h-96">
-        <div className="p-6">
-          {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'design' && renderDesign()}
-          {activeTab === 'management' && renderManagement()}
-          {activeTab === 'success' && renderSuccess()}
-          {activeTab === 'budget' && renderBudget()}
-        </div>
-      </div>
+            const renderDesign = () => (
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>קהלי יעד</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid md:grid-cols-3 gap-4">
+                                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                                    <div className="text-2xl mb-2">🏫</div>
+                                    <div className="font-medium">רשויות חינוך</div>
+                                    <div className="text-sm text-gray-600">24 חטיבות ביניים</div>
+                                </div>
+                                <div className="text-center p-4 bg-green-50 rounded-lg">
+                                    <div className="text-2xl mb-2">🚀</div>
+                                    <div className="font-medium">חברות טכנולוגיה</div>
+                                    <div className="text-sm text-gray-600">מקומיות ובינ"ל</div>
+                                </div>
+                                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                                    <div className="text-2xl mb-2">🎓</div>
+                                    <div className="font-medium">תלמידי ז'</div>
+                                    <div className="text-sm text-gray-600">600-800 תלמידים</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-      {/* Footer Summary */}
-      <div className="mt-8 bg-blue-600 text-white rounded-lg p-6 text-center">
-        <h3 className="text-xl font-bold mb-2">🎯 המסר המרכזי למנהלים</h3>
-        <p className="text-blue-100">
-          ארגז חול מלווה-מייעץ לפתרון חסמים רגולטוריים ב-AI חינוכי, 
-          בהשקעה מבוקרת ומדודה של שנתיים להניח יסודות לעתיד החינוך בישראל
-        </p>
-      </div>
-    </div>
-  );
-};
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>מטרות אסטרטגיות</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <Target />
+                                    <div>
+                                        <div className="font-medium">פתרון חסמים רגולטוריים</div>
+                                        <div className="text-sm text-gray-600">הבהרת יישום חוקי פרטיות עם AI חינוכי</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <Target />
+                                    <div>
+                                        <div className="font-medium">חיזוק התעשייה הישראלית</div>
+                                        <div className="text-sm text-gray-600">סיוע לחברות טכנולוגיה מקומיות</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <Target />
+                                    <div>
+                                        <div className="font-medium">קידום חדשנות פדגוגית</div>
+                                        <div className="text-sm text-gray-600">למידה מותאמת אישית ב-STEM ואנגלית</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
 
-export default ExecutiveDashboard;
-                  
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>שותפים אסטרטגיים</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                {stakeholders.map((stakeholder, index) => (
+                                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div className="font-medium">{stakeholder.name}</div>
+                                            <div className="text-sm text-gray-600">{stakeholder.role}</div>
+                                        </div>
+                                        <span className={`px-2 py-1 text-xs rounded-full ${
+                                            stakeholder.status === 'פעיל' ? 'bg-green-100 text-green-800' :
+                                            stakeholder.status === 'שותף' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                            {stakeholder.status}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+
+            const renderManagement = () => (
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>מבנה ניהול</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="bg-blue-50 p-4 rounded-lg">
+                                <div className="font-medium mb-2">🏛️ ועדת היגוי</div>
+                                <div className="text-sm space-y-1">
+                                    <div>• יו"ר: מנהל החדשנות והטכנולוגיה - משרד החינוך</div>
+                                    <div>• נציג רשות הגנת הפרטיות</div>
+                                    <div>• נציג משרד המשפטים</div>
+                                    <div>• מנהל רגיונל משרד החינוך</div>
+                                    <div>• נציג גופי החינוך המשתתפים</div>
+                                    <div>• מומחה חיצוני לאתיקה של AI</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>קווים אדומים ובקרת סיכונים</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {risks.map((risk, index) => (
+                                    <div key={index} className="border-r-4 border-red-400 pr-4 py-2">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="font-medium">{risk.risk}</span>
+                                            <span className={`text-xs px-2 py-1 rounded ${
+                                                risk.level === 'גבוה' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                                            }`}>
+                                                {risk.level}
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-600">🛡️ {risk.mitigation}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>שקיפות וגישה לציבור</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle />
+                                    <span>דוחות רבעוניים באתר משרד החינוך</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle />
+                                    <span>עדכונים שוטפים לקהילות הורים</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle />
+                                    <span>כנס שנתי להצגת תוצאות</span>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+
+            const renderSuccess = () => (
+                <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-green-600">🎯 קריטריוני הצלחה</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle />
+                                    <span className="text-sm">שיפור 15%+ בהישגים לימודיים</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle />
+                                    <span className="text-sm">עלייה במעורבות תלמידים</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle />
+                                    <span className="text-sm">הפחתת עומס על מורים ב-30%</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle />
+                                    <span className="text-sm">שביעות רצון +75% (הורים, מורים)</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle />
+                                    <span className="text-sm">עמידה מלאה בתקני פרטיות</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-red-600">⚠️ קריטריוני כישלון</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <AlertCircle />
+                                    <span className="text-sm">ירידה בהישגים או אי-שיפור</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <AlertCircle />
+                                    <span className="text-sm">הפרת פרטיות או דליפת מידע</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <AlertCircle />
+                                    <span className="text-sm">התנגדות +30% מההורים</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <AlertCircle />
+                                    <span className="text-sm">תקלות טכניות חוזרות</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>מערך מדידה ובקרה</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid md:grid-cols-3 gap-4">
+                                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                                    <Clock />
+                                    <div className="font-medium mt-2">דיווחים חודשיים</div>
+                                    <div className="text-sm text-gray-600">מבתי הספר</div>
+                                </div>
+                                <div className="text-center p-4 bg-green-50 rounded-lg">
+                                    <Users />
+                                    <div className="font-medium mt-2">פגישות רבעוניות</div>
+                                    <div className="text-sm text-gray-600">ועדת היגוי</div>
+                                </div>
+                                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                                    <TrendingUp />
+                                    <div className="font-medium mt-2">סקרי שביעות רצון</div>
+                                    <div className="text-sm text-gray-600">כל סמסטר</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>אסטרטגיות יציאה</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="p-4 bg-green-50 rounded-lg border-r-4 border-green-400">
+                                    <div className="font-medium text-green-800">🚀 תרחיש הצלחה</div>
+                                    <div className="text-sm text-green-700">פריסה הדרגתית למערכת החינוך + התאמת רגולציה</div>
+                                </div>
+                                <div className="p-4 bg-red-50 rounded-lg border-r-4 border-red-400">
+                                    <div className="font-medium text-red-800">🔄 תרחיש כישלון</div>
+                                    <div className="text-sm text-red-700">הפסקת ניסוי + תיקון ליקויים + פיתוח גישה חלופית</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+
+            const renderBudget = () => (
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>פילוח תקציב קול הקורא</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                                    <div>
+                                        <div className="font-medium">ניטור ובקרה</div>
+                                        <div className="text-sm text-gray-600">מערכות מדידה + מומחים חיצוניים</div>
+                                    </div>
+                                    <div className="text-xl font-bold text-blue-600">30%</div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                                    <div>
+                                        <div className="font-medium">הכשרת צוותים</div>
+                                        <div className="text-sm text-gray-600">הכשרת מורים + ליווי פדגוגי</div>
+                                    </div>
+                                    <div className="text-xl font-bold text-green-600">25%</div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                                    <div>
+                                        <div className="font-medium">תשתיות טכנולוגיות</div>
+                                        <div className="text-sm text-gray-600">שדרוג תשתיות + אבטחה</div>
+                                    </div>
+                                    <div className="text-xl font-bold text-purple-600">20%</div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
+                                    <div>
+                                        <div className="font-medium">ניהול פרויקט</div>
+                                        <div className="text-sm text-gray-600">צוות ניהול + יועצים</div>
+                                    </div>
+                                    <div className="text-xl font-bold text-orange-600">15%</div>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <div className="font-medium">פרסום וחשיפה</div>
+                                        <div className="text-sm text-gray-600">כנסים + שיתוף בינלאומי</div>
+                                    </div>
+                                    <div className="text-xl font-bold text-gray-600">10%</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>משאבים נוספים נדרשים</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 className="font-medium mb-3">👥 כוח אדם</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div>• מנהל פרויקט ייעודי (משרה מלאה)</div>
+                                        <div>• 3-4 מומחי טכנולוגיה חינוכית</div>
+                                        <div>• יועצים משפטיים (פרטיות + AI)</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium mb-3">🤝 שותפים</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div>• רשות הגנת הפרטיות (ליווי)</div>
+                                        <div>• מכוני מחקר (הערכה)</div>
+                                        <div>• ארגוני הורים ומורים</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium mb-3">🧠 ידע</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div>• מחקר בינלאומי AI בחינוך</div>
+                                        <div>• ייעוץ משפטי מתקדם</div>
+                                        <div>• מומחיות אתיקה AI</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium mb-3">🏗️ תשתיות</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div>• מרכז נתונים מאובטח</div>
+                                        <div>• מחשוב ענן ייעודי</div>
+                                        <div>• מערכות גיבוי מתקדמות</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+
+            return (
+                <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
+                    <div className="mb-8">
+                        <h1 className="text-4xl font-bold text-center mb-4">ארגז חול AI - תוכנית 720</h1>
+                        <h2 className="text-xl text-center text-gray-600 mb-6">למידה מותאמת אישית במערכת החינוך</h2>
+                        
+                        <div className="bg-white rounded-lg shadow p-6 mb-6">
+                            <div className="grid grid-cols-4 gap-4 text-center">
+                                <div>
+                                    <div className="text-3xl font-bold text-blue-600">720</div>
+                                    <div className="text-sm text-gray-600">תוכנית</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-green-600">24</div>
+                                    <div className="text-sm text-gray-600">בתי ספר</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-purple-600">2</div>
+                                    <div className="text-sm text-gray-600">שנות ניסוי</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-orange-600">800</div>
+                                    <div className="text-sm text-gray-600">תלמידים</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow mb-6">
+                        <div className="flex overflow-x-auto">
+                            {tabs.map(tab => {
+                                const Icon = tab.icon;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap ${
+                                            activeTab === tab.id
+                                                ? 'border-blue-500 text-blue-600 bg-blue-50'
+                                                : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        <Icon />
+                                        {tab.title}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow min-h-96">
+                        <div className="p-6">
+                            {activeTab === 'overview' && renderOverview()}
+                            {activeTab === 'design' && renderDesign()}
+                            {activeTab === 'management' && renderManagement()}
+                            {activeTab === 'success' && renderSuccess()}
+                            {activeTab === 'budget' && renderBudget()}
+                        </div>
+                    </div>
+
+                    <div className="mt-8 bg-blue-600 text-white rounded-lg p-6 text-center">
+                        <h3 className="text-xl font-bold mb-2">🎯 המסר המרכזי למנהלים</h3>
+                        <p className="text-blue-100">
+                            ארגז חול מלווה-מייעץ לפתרון חסמים רגולטוריים ב-AI חינוכי, 
+                            בהשקעה מבוקרת ומדודה של שנתיים להניח יסודות לעתיד החינוך בישראל
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<ExecutiveDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
